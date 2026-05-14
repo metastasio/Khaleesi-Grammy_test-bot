@@ -1,12 +1,19 @@
 require('dotenv').config();
 
+const express = require('express');
 const { Bot, GrammyError, HttpError } = require('grammy');
 const { khaleesify } = require('./utils/khaleesify.js');
 
+const app = express();
 const bot = new Bot(process.env.BOT_API_KEY);
+const port = process.env.PORT || 8080;
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ ok: true });
+});
 
 bot.hears(
-  [/огон/i, /гори/i, /пепел/i, /пепл/i, /дракарис/i, /горяч/i],
+  [/огон/i, /гори/i, /пепел/i, /пепл/i, /дракарис/i, /горят/i, /горяч/i],
   async (ctx) => {
     await ctx.react('🔥');
   },
@@ -38,6 +45,10 @@ bot.catch((err) => {
   } else {
     console.error('Unknown error', e);
   }
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
 
 bot.start();
